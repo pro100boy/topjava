@@ -38,6 +38,10 @@ public class UserMealsUtil {
 
         List<UserMealWithExceed> listUserMealWithExceed = new ArrayList<>();
 
+        // считаем калории по дням
+        Map<LocalDate, Integer> mapCaloriesPerDay = mealList.stream()
+                .collect(Collectors.groupingBy(m -> m.getDateTime().toLocalDate(), Collectors.summingInt(UserMeal::getCalories)));
+
         /* ======================================================================== */
         /*                          STREAM API                                      */
         /* ======================================================================== */
