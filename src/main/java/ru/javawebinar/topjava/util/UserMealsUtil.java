@@ -35,7 +35,7 @@ public class UserMealsUtil {
 //        .toLocalTime();
     }
 
-    public static List<UserMealWithExceed> getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    private static List<UserMealWithExceed> getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         //  return filtered list with correctly exceeded field
 
         // считаем калории по дням
@@ -45,7 +45,7 @@ public class UserMealsUtil {
         // заполняем возвращаемый список
         List<UserMealWithExceed> listUserMealWithExceed = mealList.stream()
                 .filter(s -> TimeUtil.isBetween(s.getDateTime().toLocalTime(), startTime, endTime))
-                .map(p -> new UserMealWithExceed(p.getDateTime(), p.getDescription(), p.getCalories(), mapCaloriesPerDay.get(p.getDateTime().toLocalDate()) <= caloriesPerDay ? false : true))
+                .map(p -> new UserMealWithExceed(p.getDateTime(), p.getDescription(), p.getCalories(), mapCaloriesPerDay.get(p.getDateTime().toLocalDate()) > caloriesPerDay ? true : false))
                 .collect(Collectors.toList());
 
         return listUserMealWithExceed;
