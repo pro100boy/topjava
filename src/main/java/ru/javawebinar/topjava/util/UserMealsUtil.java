@@ -10,6 +10,7 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -28,26 +29,23 @@ public class UserMealsUtil {
                 new UserMeal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510)     // exceed = true
         );
         getFilteredWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
-        /*System.out.println(getFilteredWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
-        System.out.println(getFilteredWithExceeded(mealList, LocalTime.of(13, 0), LocalTime.of(20, 0), 2000));
-        System.out.println(getFilteredWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(22, 0), 5000));*/
 //        .toLocalDate();
 //        .toLocalTime();
     }
 
     private static List<UserMealWithExceed> getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         //  return filtered list with correctly exceeded field
-
+        // check for null
+        // но проверять на пустой список не надо. Все итак отработает
+        mealList = Objects.requireNonNull(mealList, "mealList must not be null!");
         // считаем калории по дням
         Map<LocalDate, Integer> mapCaloriesPerDay = mealList.stream()
                 .collect(Collectors.groupingBy(m -> m.getDateTime().toLocalDate(), Collectors.summingInt(UserMeal::getCalories)));
 
         // заполняем возвращаемый список
-        List<UserMealWithExceed> listUserMealWithExceed = mealList.stream()
+        return mealList.stream()
                 .filter(s -> TimeUtil.isBetween(s.getDateTime().toLocalTime(), startTime, endTime))
                 .map(p -> new UserMealWithExceed(p.getDateTime(), p.getDescription(), p.getCalories(), mapCaloriesPerDay.get(p.getDateTime().toLocalDate()) > caloriesPerDay ? true : false))
                 .collect(Collectors.toList());
-
-        return listUserMealWithExceed;
     }
 }
